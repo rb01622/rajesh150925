@@ -1,0 +1,14 @@
+{
+  "name": "node-devops-sample",
+  "version": "1.0.0",
+  "description": "A sample Node.js app for DevOps CI/CD pipeline",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+

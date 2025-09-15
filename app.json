@@ -1,0 +1,20 @@
+{
+  "name": "node-devops-sample",
+  "description": "A simple Node.js app deployed via CI/CD",
+  "repository": "https://github.com/rb01622/rajesh150925.git",
+  "keywords": ["node", "express", "devops", "ci/cd"],
+  "scripts": {
+    "postdeploy": "echo 'App deployed successfully!'"
+  },
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "PORT": {
+      "description": "Port number for the app",
+      "value": "3000"
+    }
+  }
+}
+
