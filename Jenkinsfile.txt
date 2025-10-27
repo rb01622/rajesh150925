@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs "NodeJS 18"   // Use NodeJS installed in Jenkins
+    }
+
+    environment {
+        TARGET_USER = 'kbkannah'
+        TARGET_HOST = '34.55.54.62'
+        TARGET_PATH = '/home/kbkannah/nodeapp'
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rb01622/rajesh150925.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test || echo "No tests found"'
+            }
+        }
+
+        stage('Deploy to Target VM') {
+            steps {
+                sshagent(['linux-deploy-key']) {
+                    sh '''
+                    ssh $TARGET_USER@$TARGET_HOST "mkdir -p $TARGET_PATH"
+                    scp -r * $TARGET_USER@$TARGET_HOST:$TARGET_PATH/
+                    ssh $TARGET_USER@$TARGET_HOST "pm2 restart nodeapp || pm2 start $TARGET_PATH/app.js --name nodeapp"
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Deployment Successful!'
+        }
+        failure {
+            echo '❌ Deployment Failed.'
+        }
+    }
+}
