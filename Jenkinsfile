@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        DEPLOY_SERVER = "34.55.54.62"       // Target VM IP
+        DEPLOY_SERVER = "35.223.110.211"       // Target VM IP
         DEPLOY_USER = "kbkannah"            // Target VM username
     }
 
