@@ -30,19 +30,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to Target VM') {
-            steps {
-                sshagent(['linux-deploy-key']) {
-                    sh '''
-                    ssh $TARGET_USER@$TARGET_HOST "mkdir -p $TARGET_PATH"
-                    scp -r * $TARGET_USER@$TARGET_HOST:$TARGET_PATH/
-                    ssh $TARGET_USER@$TARGET_HOST "pm2 restart nodeapp || pm2 start $TARGET_PATH/app.js --name nodeapp"
-                    '''
-                }
-            }
+      stage('Deploy to VM') {
+    steps {
+        sshagent(['linux-deploy-key']) {
+            sh '''
+            ssh -o StrictHostKeyChecking=no kbkannah@34.55.54.62 "echo ✅ Connected successfully"
+            '''
         }
     }
-
+}
+            }
+        }
+    
+}
     post {
         success {
             echo '✅ Deployment Successful!'
