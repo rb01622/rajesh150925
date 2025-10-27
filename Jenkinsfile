@@ -2,17 +2,16 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS 18"   // Use NodeJS installed in Jenkins
+        nodejs "NodeJS 18"
     }
 
     environment {
-        TARGET_USER = 'kbkannah'
-        TARGET_HOST = '34.55.54.62'
-        TARGET_PATH = '/home/kbkannah/nodeapp'
+        DEPLOY_SERVER = "34.55.54.62"       // target VM IP
+        DEPLOY_USER = "kbkannah"            // target VM username
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/rb01622/rajesh150925.git'
             }
@@ -24,31 +23,25 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Build') {
             steps {
-                sh 'npm test || echo "No tests found"'
+                sh 'npm run build'
             }
         }
 
-      stage('Deploy to VM') {
-    steps {
-        sshagent(['linux-deploy-key']) {
-            sh '''
-            ssh -o StrictHostKeyChecking=no kbkannah@34.55.54.62 "echo ✅ Connected successfully"
-            '''
-        }
-    }
-}
+        stage('Deploy to Target VM') {
+            steps {
+                sshagent(['linux-deploy-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_SERVER} '
+                        cd /var/www/nodeapp || mkdir -p /var/www/nodeapp && cd /var/www/nodeapp
+                        git pull origin main || git clone https://github.com/rb01622/rajesh150925.git .
+                        npm install
+                        npm run start
+                    '
+                    '''
+                }
             }
-        }
-    
-}
-    post {
-        success {
-            echo '✅ Deployment Successful!'
-        }
-        failure {
-            echo '❌ Deployment Failed.'
         }
     }
 }
